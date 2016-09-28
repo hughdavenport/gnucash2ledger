@@ -27,6 +27,8 @@ module G2L
 
       accounts = resolve_accounts(accounts)
 
+      max_account_length = accounts.map(&:second).map { |hash| hash[:name] }.map(&:length).max
+
       transactions = doc.xpath('//gnc:transaction').map do |transaction|
         {
           :date        => Date.parse(transaction.xpath("trn:date-posted/ts:date")[0].text),
@@ -55,7 +57,7 @@ module G2L
           else
             '$' + split[:quantity].to_s
           end
-          "  %-44s%s" % [account[:name], value]
+          "  %-#{[ max_account_length + 2, 44].max}s%s" % [account[:name], value]
         }).join("\n")
       end.join("\n\n")
     end
