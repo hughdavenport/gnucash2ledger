@@ -7,6 +7,12 @@ module G2L
   class Input
     attr_accessor :input
 
+    CURRENCY_SYMBOLS = {
+      "USD" => "$",
+      "GPB" => "£",
+      "EUR" => "€",
+    }
+
     def initialize(input)
       self.input = input
     end
@@ -52,10 +58,10 @@ module G2L
         ]] + tx[:splits].map {|split|
           account = accounts[split[:account]]
 
-          value = if split[:action]
-            "%i %s" % [split[:quantity].to_i, account[:commodity]]
+          value = if split[:action] || !CURRENCY_SYMBOLS.include?(account[:commodity])
+            "%s %s" % [split[:quantity].to_s, account[:commodity]]
           else
-            '$' + split[:quantity].to_s
+            CURRENCY_SYMBOLS[account[:commodity]] + split[:quantity].to_s
           end
           "  %-#{[ max_account_length + 2, 44].max}s%s" % [account[:name], value]
         }).join("\n")
