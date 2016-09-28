@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'date'
+require 'active_support'
 require 'active_support/core_ext'
 
 module G2L
